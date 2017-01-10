@@ -67,7 +67,9 @@ describe('server', function() {
   });
 
   it('Should 404 when asked for a nonexistent endpoint', function(done) {
+    //changed from arglebargle
     request('http://127.0.0.1:3000/arglebargle', function(error, response, body) {
+      //console.log(arguments, "inside endpoint 404 test");
       expect(response.statusCode).to.equal(404);
       done();
     });
