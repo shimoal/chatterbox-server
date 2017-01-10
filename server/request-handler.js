@@ -12,7 +12,7 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 //var Router = require('router');
-
+var fs = require('fs');
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -21,11 +21,26 @@ var defaultCorsHeaders = {
 };
 
 
-var storage = [];
+var storage = [{username: 'moo', message: 'me'}];
 
+fs.writeFile('./file/storage.txt', JSON.stringify(storage), function(err) {
+  if (err) {
+    console.log(err, "error in write file");
+  }
+  console.log('init storage');
+});
 
 var requestHandler = function(request, response) {
 
+  fs.readFile('./file/storage.txt', 'utf8', function(err, data) {
+    if (err) {
+      console.log('there was an error reading storage: ', err);
+    }
+    storage = JSON.parse(data);
+
+  });
+  console.log('storage:', storage);
+//storage = JSON.parse(storage);
 
   var body = { results: [] };
   // Request and Response come from node's http module.
@@ -63,29 +78,32 @@ var requestHandler = function(request, response) {
 
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') { 
-      console.log('inside GET', storage);
+      console.log(storage[0]);
       for (var i = 0; i < storage.length; i++) {
         body.results.push(storage[i]);
       }
       statusCode = 200;
     } else if (request.method === 'POST') {
+      console.log('storage in post', storage);
       request.on('data', function(chunk) {
         chunk = JSON.parse(chunk.toString('utf-8'));
         chunk.createdAt = new Date();
         chunk.objectId = (Math.floor(Math.random() * 10000000000)).toString();
-
-        //create a chat object
-        //parse the chunk
-        //add onto the chunk with objectID and createdAt
         storage.push(chunk);
-        console.log(storage, 'here is Storage!!!!!!!!!!!');
+
+        fs.writeFile('./file/storage.txt', JSON.stringify(storage), function(err) {
+          if (err) {
+            console.log(err, "error in write file");
+          }
+          console.log('chunk to storage');
+        });
+
       });
       statusCode = 201;
  
 
     } 
   } else { 
-    console.log('setting 404 code');
     statusCode = 404;
   }
 
@@ -102,14 +120,6 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
 
 
-  // request.on('error', function(err) {
-  //   console.log(err);
-  // }).on('data', function(chunk) {
-  //   body.results.push(chunk);
-  // });
-
-  //console.log(JSON.stringify(body));
-  console.log(body);
   response.end(JSON.stringify(body));
 
 
