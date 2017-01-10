@@ -116,4 +116,46 @@ describe('Node Server Request Listener Function', function() {
       });
   });
 
+  it('Should create a new date for each message', function() {
+    var stubMsg = {
+      username: 'Nemo',
+      message: 'BLurp'
+    };
+
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+
+    handler.requestHandler(req, res);
+    req = new stubs.request('/classes/messages', 'GET');
+    handler.requestHandler(req, res);
+    var messages = JSON.parse(res._data).results;
+
+    expect(messages[0].createdAt).to.exist;
+    //expect(res.createdAt).to.be.a.('Date');
+
+  });
+
+  it('Should have messages with an objectId property', function() {
+    var req = new stubs.request('/classes/messages', 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var messages = JSON.parse(res._data).results;
+
+    expect(messages[0].objectId).to.exist;
+
+  });
+
+  it('Should have objectId properties that are unique', function() {
+    var req = new stubs.request('/classes/messages', 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var messages = JSON.parse(res._data).results;
+    expect(messages[0].objecId).to.not.equal(messages[1].objectId);
+  });
+
 });

@@ -23,7 +23,9 @@ var defaultCorsHeaders = {
 
 var storage = [];
 
+
 var requestHandler = function(request, response) {
+
 
   var body = { results: [] };
   // Request and Response come from node's http module.
@@ -60,22 +62,30 @@ var requestHandler = function(request, response) {
 
 
   if (request.url === '/classes/messages') {
-    if (request.method === 'GET') {
+    if (request.method === 'GET') { 
+      console.log('inside GET', storage);
       for (var i = 0; i < storage.length; i++) {
         body.results.push(storage[i]);
       }
       statusCode = 200;
     } else if (request.method === 'POST') {
       request.on('data', function(chunk) {
-        storage.push(JSON.parse(chunk.toString('utf-8')));
+        chunk = JSON.parse(chunk.toString('utf-8'));
+        chunk.createdAt = new Date();
+        chunk.objectId = (Math.floor(Math.random() * 10000000000)).toString();
+
+        //create a chat object
+        //parse the chunk
+        //add onto the chunk with objectID and createdAt
+        storage.push(chunk);
         console.log(storage, 'here is Storage!!!!!!!!!!!');
       });
       statusCode = 201;
  
 
     } 
-  } else {
-
+  } else { 
+    console.log('setting 404 code');
     statusCode = 404;
   }
 
@@ -99,7 +109,10 @@ var requestHandler = function(request, response) {
   // });
 
   //console.log(JSON.stringify(body));
+  console.log(body);
   response.end(JSON.stringify(body));
+
+
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

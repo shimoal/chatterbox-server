@@ -1,8 +1,14 @@
 /* Import node's http module: */
 //var finalhandler = require('finalhandler');
 //var Router = require('router');
+var fs = require('fs');
 var http = require('http');
 var handleRequest = require('./request-handler');
+
+
+
+
+
 
 
 // Every server needs to listen on a port with a unique number. The
@@ -17,6 +23,22 @@ var port = 3000;
 var ip = '127.0.0.1';
 
 
+fs.readFile('./../client/index.html', function(err, data) {
+  if (err) {
+    return console.log(err, "here is our error inside reqHang");
+  } else {
+    //response.writeHeader(200, { 'Content-Type': 'text/html'});
+    console.log('data', data);
+    // response.end("Hereere");
+  }
+  var requestHandler = handleRequest.requestHandler;
+
+  var server = http.createServer(requestHandler);
+  console.log('Listening on http://' + ip + ':' + port);
+  server.listen(port, ip);
+  //console.log(data);
+});
+
 
 // We use node's http module to create a server.
 //
@@ -24,11 +46,7 @@ var ip = '127.0.0.1';
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
-var requestHandler = handleRequest.requestHandler;
 
-var server = http.createServer(requestHandler);
-console.log('Listening on http://' + ip + ':' + port);
-server.listen(port, ip);
 
 // To start this server, run:
 //
