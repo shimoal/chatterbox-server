@@ -44,7 +44,7 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode;
+  var statusCode = 200;
 
   var headers = defaultCorsHeaders;
 
@@ -63,14 +63,15 @@ var requestHandler = function(request, response) {
     if (request.method === 'GET') {
       for (var i = 0; i < storage.length; i++) {
         body.results.push(storage[i]);
-      // console.log('body: ', body)
-      // console.log('body results: ', JSON.stringify(body));
       }
       statusCode = 200;
     } else if (request.method === 'POST') {
-
+      request.on('data', function(chunk) {
+        storage.push(JSON.parse(chunk.toString('utf-8')));
+        console.log(storage, 'here is Storage!!!!!!!!!!!');
+      });
       statusCode = 201;
-      storage.push(request._postData);
+ 
 
     } 
   } else {
@@ -97,7 +98,7 @@ var requestHandler = function(request, response) {
   //   body.results.push(chunk);
   // });
 
-  console.log(JSON.stringify(body));
+  //console.log(JSON.stringify(body));
   response.end(JSON.stringify(body));
 };
 
