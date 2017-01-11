@@ -36,10 +36,10 @@ var requestHandler = function(request, response) {
     if (err) {
       console.log('there was an error reading storage: ', err);
     }
-    storage = JSON.parse(data);
+    var storageData = JSON.parse(data);
+    storage = storageData;
 
   });
-  console.log('storage:', storage);
 //storage = JSON.parse(storage);
 
   var body = { results: [] };
@@ -75,37 +75,48 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
   headers['Content-Type'] = 'application/JSON';
 
+  // if (request.url === './' ) {
+  //   fs.readFile('./../client/index.html', function(err, data) {
 
-  if (request.url === '/classes/messages') {
-    if (request.method === 'GET') { 
-      console.log(storage[0]);
-      for (var i = 0; i < storage.length; i++) {
-        body.results.push(storage[i]);
-      }
-      statusCode = 200;
-    } else if (request.method === 'POST') {
-      console.log('storage in post', storage);
-      request.on('data', function(chunk) {
-        chunk = JSON.parse(chunk.toString('utf-8'));
-        chunk.createdAt = new Date();
-        chunk.objectId = (Math.floor(Math.random() * 10000000000)).toString();
-        storage.push(chunk);
+  //     if (err) {
 
-        fs.writeFile('./file/storage.txt', JSON.stringify(storage), function(err) {
-          if (err) {
-            console.log(err, "error in write file");
-          }
-          console.log('chunk to storage');
-        });
+  //       response.writeHead(500);
+  //       response.end();
+  //     } else {
+  //       console.log('data', data);
+  //       response.writeHead(200, { 'Content-Type': 'text/html'});
+  //       response.end(data, 'utf-8');
+  //     }
+  //   });
+  // } 
 
+  if (request.method === 'GET') { 
+    console.log(storage[0]);
+    for (var i = 0; i < storage.length; i++) {
+      body.results.push(storage[i]);
+    }
+    statusCode = 200;
+  } else if (request.method === 'POST') {
+    console.log('storage in post', storage);
+    request.on('data', function(chunk) {
+      chunk = JSON.parse(chunk.toString('utf-8'));
+      chunk.createdAt = new Date();
+      chunk.objectId = (Math.floor(Math.random() * 10000000000)).toString();
+      storage.push(chunk);
+
+      fs.writeFile('./file/storage.txt', JSON.stringify(storage), function(err) {
+        if (err) {
+          console.log(err, 'error in write file');
+        }
+        console.log('chunk to storage');
       });
-      statusCode = 201;
- 
 
-    } 
-  } else { 
-    statusCode = 404;
-  }
+    });
+    statusCode = 201;
+
+
+  } 
+
 
   response.writeHead(statusCode, headers);
   // See the note below about CORS headers.

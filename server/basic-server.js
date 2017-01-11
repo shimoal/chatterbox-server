@@ -4,7 +4,18 @@
 var fs = require('fs');
 var http = require('http');
 var handleRequest = require('./request-handler');
+// var _ = require('underscore');
+// var $ = require('jquery');
+var express = require('express');
+var app = express();
 
+app.get('/', function(req, res) {
+  res.send('Hello World!');
+});
+
+app.listen(3000, function() {
+  console.log('example app listening on port 3000');
+});
 
 
 
@@ -16,28 +27,35 @@ var handleRequest = require('./request-handler');
 // normally already claimed by another server and/or not accessible
 // so we'll use a standard testing port like 3000, other common development
 // ports are 8080 and 1337.
-var port = 3000;
 // For now, since you're running this server on your local machine,
 // we'll have it listen on the IP address 127.0.0.1, which is a
 // special address that always refers to localhost.
-var ip = '127.0.0.1';
+
+// var port = 3000;
+// var ip = '127.0.0.1';
+// server = http.createServer(function(request, response) {
+//     console.log(request.url, 'this is my url');
+//      if (request.url === '/classes/messages') {
+//     requestHandler(request, response);
+//   } else {
+//     console.log('EROROROROR');
+//   }
+
+  //fs.readFile('./../client/index.html', function(err, data) {
+
+    
+//});
+
+//}).listen(port);
 
 
-fs.readFile('./../client/index.html', function(err, data) {
-  if (err) {
-    return console.log(err, "here is our error inside reqHang");
-  } else {
-    //response.writeHeader(200, { 'Content-Type': 'text/html'});
-    console.log('data', data);
-    // response.end("Hereere");
-  }
-  var requestHandler = handleRequest.requestHandler;
+  // var requestHandler = handleRequest.requestHandler;
 
-  var server = http.createServer(requestHandler);
-  console.log('Listening on http://' + ip + ':' + port);
-  server.listen(port, ip);
+  // var server = http.createServer(requestHandler);
+  // console.log('Listening on http://' + ip + ':' + port);
+server.listen(port, ip);
   //console.log(data);
-});
+// });
 
 
 // We use node's http module to create a server.
